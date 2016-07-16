@@ -19,10 +19,7 @@ copy %CACHED_NUGET% src\.nuget\nuget.exe > nul
 
 src\.nuget\NuGet.exe update -self
 
-
 pushd %~dp0
-
-src\.nuget\NuGet.exe update -self
 
 src\.nuget\NuGet.exe install FAKE -ConfigFile src\.nuget\Nuget.Config -OutputDirectory src\packages -ExcludeVersion -Version 4.16.1
 
