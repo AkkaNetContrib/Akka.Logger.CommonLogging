@@ -30,7 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Reference Include="Akka, Version=1.2.0.33, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Akka.1.2.0\lib\net45\Akka.dll</HintPath>
       <Private>True</Private>
