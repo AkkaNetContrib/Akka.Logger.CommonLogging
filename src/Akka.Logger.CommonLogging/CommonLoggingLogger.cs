@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright file="CommonLoggingLogger.cs" company="Akka.NET Project">
 //     Copyright (C) 2009-2016 Typesafe Inc. <http://www.typesafe.com>
 //     Copyright (C) 2013-2016 Akka.NET project <https://github.com/akkadotnet/akka.net>
@@ -39,10 +39,37 @@ namespace Akka.Logger.CommonLogging
                 this.Sender.Tell(new LoggerInitialized());
             });
         }
-        private static void Log(LogEvent logEvent, Action<ILog> logStatement)
+
+        private void Log(LogEvent logEvent, Action<ILog> logStatement)
         {
             var logger = LogManager.GetLogger(logEvent.LogClass.FullName);
-            logStatement(logger);
+
+            logger.ThreadVariablesContext.Set(MdcAkkaSourceAttributeName, logEvent.LogSource);
+            logger.ThreadVariablesContext.Set(MdcThreadAttributeName, logEvent.Thread.ManagedThreadId);
+            logger.ThreadVariablesContext.Set(MdcAkkaTimestamp, logEvent.Timestamp);
+            logger.ThreadVariablesContext.Set(MdcActorSystemAttributeName, ActorSystemName);
+
+            try
+            {
+                logStatement(logger);
+            }
+            finally
+            {
+                logger.ThreadVariablesContext.Remove(MdcAkkaSourceAttributeName);
+                logger.ThreadVariablesContext.Remove(MdcThreadAttributeName);
+                logger.ThreadVariablesContext.Remove(MdcAkkaTimestamp);
+                logger.ThreadVariablesContext.Remove(MdcActorSystemAttributeName);
+            }
         }
+
+        public string ActorSystemName
+        {
+            get { return Context.System.Name; }
+        }
+
+        public static readonly string MdcThreadAttributeName = "sourceThread";
+        public static readonly string MdcActorSystemAttributeName = "sourceActorSystem";
+        public static readonly string MdcAkkaSourceAttributeName = "akkaSource";
+        public static readonly string MdcAkkaTimestamp = "akkaTimestamp";
     }
 }
