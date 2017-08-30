@@ -31,8 +31,8 @@ Target "Clean" (fun _ ->
     CleanDir outputBinaries
     CleanDir outputNuGet
 
-    CleanDirs !! "./**/bin"
-    CleanDirs !! "./**/obj"
+    CleanDirs !! "./src/**/bin"
+    CleanDirs !! "./src/**/obj"
 )
 
 Target "RestorePackages" (fun _ ->
@@ -96,11 +96,31 @@ Target "PublishNuget" (fun _ ->
 
 
 //--------------------------------------------------------------------------------
+// Help 
+//--------------------------------------------------------------------------------
+
+Target "Help" <| fun _ ->
+    List.iter printfn [
+      "usage:"
+      "build [target]"
+      ""
+      " Targets for building:"
+      " * Build      Builds"
+      " * Nuget      Create and optionally publish nugets packages"
+      " * RunTests   Runs tests"
+      " * All        Builds, run tests, creates and optionally publish nuget packages"
+      ""
+      " Other Targets"
+      " * Help       Display this help" 
+      " * HelpNuget  Display help about creating and pushing nuget packages" 
+      ""]
+
+
+//--------------------------------------------------------------------------------
 //  Target dependencies
 //--------------------------------------------------------------------------------
 
 Target "BuildRelease" DoNothing
-Target "All" DoNothing
 Target "Nuget" DoNothing
 
 // build dependencies
@@ -111,6 +131,8 @@ Target "Nuget" DoNothing
 "CreateNuget" ==> "PublishNuget" ==> "Nuget"
 
 // all
+Target "All" DoNothing
 "BuildRelease" ==> "All"
+"Nuget" ==> "All"
 
-RunTargetOrDefault "All"
+RunTargetOrDefault "Help"
